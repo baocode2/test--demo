@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quà tặng cuộc sống</title>
+    <style>
+        /* CSS Styling */
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(to bottom right, #ffdde2, #ee9ca7);
+            font-family: 'Quicksand', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        /* THÊM MỚI 2: CSS cho trái tim đang đập */
+        @keyframes beat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        #beating-heart {
+            position: absolute;
+            width: 24cm; /* Kích thước lớn để thấy rõ */
+            height: 28cm;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0; /* Ban đầu ẩn */
+            z-index: -1; /* Nằm ở lớp sâu nhất, dưới các ảnh nền */
+            transition: opacity 0.8s ease-in-out 0.5s;
+            
+            animation: beat 1.5s infinite ease-in-out;
+            animation-play-state: paused; /* Tạm dừng animation */
+        }
+
+        #beating-heart::before,
+        #beating-heart::after {
+            content: "";
+            position: absolute;
+            left: 12cm;
+            top: 0;
+            width: 12cm;
+            height: 20cm;
+            background: #ff7b7b;
+            border-radius: 100px 100px 0 0;
+            transform-origin: 0 100%;
+        }
+
+        #beating-heart::before {
+            transform: rotate(-45deg);
+        }
+
+        #beating-heart::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+        
+        /* THÊM MỚI 3: Kích hoạt trái tim khi thư mở */
+        body.open #beating-heart {
+            opacity: 0.15;
+            animation-play-state: running; /* Bắt đầu animation */
+        }
+
+
+        .background-image {
+            position: absolute;
+            width: 25vw;
+            max-width: 300px;
+            height: auto;
+            border-radius: 15px;
+            opacity: 0.6;
+            filter: blur(0px);
+            z-index: 0; /* Nằm trên trái tim (-1) */
+            transition: opacity 0.5s ease-in-out, filter 0.5s ease-in-out;
+        }
+
+        #bg-image-1 { top: 5vh; left: 5vw; transform: rotate(4deg); }
+        #bg-image-2 { bottom: 6vh; right: 6vw; transform: rotate(-4deg); }
+        #bg-image-3 { top: 5vh; right: 5vw; transform: rotate(3deg); }
+        #bg-image-4 { bottom: 5vh; left: 5vw; transform: rotate(-5deg); }
+        
+        #side-image {
+            position: absolute;
+            left: 5vw;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30vw;
+            max-width: 400px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out 0.3s, transform 0.8s ease-in-out; 
+            cursor: pointer;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer; 
+            z-index: 2;
+        }
+
+        .envelope {
+            position: relative;
+            width: 320px;
+            height: 200px;
+            background-color: #f08080;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.8s ease-in-out; 
+        }
+
+        .flap {
+            position: absolute;
+            width: 100%;
+            height: 100px;
+            background-color: #f08080;
+            top: 0;
+            left: 0;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            transform-origin: top;
+            transition: transform 0.6s ease-in-out; 
+            clip-path: polygon(0% 0%, 100% 0%, 100% 50%, 50% 100%, 0% 50%);
+        }
+        
+        .envelope-front {
+             position: absolute;
+             top: 0;
+             left: 0;
+             width: 100%;
+             height: 100%;
+             background-color: #f4978e;
+             clip-path: polygon(0% 100%, 0% 48%, 50% 98%, 100% 48%, 100% 100%);
+        }
+
+        .prompt {
+            color: white;
+            font-size: 1.2em;
+            font-weight: 600;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
+            transition: opacity 0.5s ease-in-out 0.2s; 
+        }
+
+        .card {
+            position: absolute;
+            background: white;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 280px;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: -1;
+            transition: all 0.8s ease-in-out 0.4s; 
+            opacity: 0;
+        }
+
+        h1, p { /* Giữ nguyên */ }
+
+        .envelope-wrapper.open .flap { transform: rotateX(180deg); }
+        .envelope-wrapper.open .card { top: -150px; z-index: 2; opacity: 1; }
+        .envelope-wrapper.open .envelope { transform: scale(0.9) translateX(350px); }
+        body.open #side-image { opacity: 1; transform: translateY(-50%) translateX(+40%); }
+        #side-image.open-state { opacity: 1; transform: translateY(-50%) translateX(-50%); }
+        .envelope-wrapper.open .prompt { opacity: 0; }
+
+        #flower-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="beating-heart"></div>
+
+    <img src="anh2.jpg" alt="background image 1" class="background-image" id="bg-image-1">
+    <img src="anh3.jpg" alt="background image 2" class="background-image" id="bg-image-2">
+    <img src="anh4.jpg" alt="background image 3" class="background-image" id="bg-image-3">
+    <img src="anh5.jpg" alt="background image 4" class="background-image" id="bg-image-4">
+    
+    <canvas id="flower-canvas"></canvas>
+    <img src="anh1.jpg" alt="Món quà đặc biệt" id="side-image">
+
+    <div class="envelope-wrapper" id="envelope">
+        <div class="envelope">
+            <div class="flap"></div>
+            <div class="envelope-front"></div>
+            <div class="prompt">Bấm đại đi</div>
+        </div>
+        <div class="card">
+            <h1><p style="font-family: Font Cursive">Thư tay viết máy:v</p></h1>
+            <p>
+                Nhân ngày 20/10 em chúc chị luôn xinh đẹp nhiều tiền nhiều thành công niềm vui blabla...<br>
+                Với lại mong chị <b> sống tình cảm hơn </b> chứ chị <i> <b>TỆ</b> </i>quá @@
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // --- JavaScript giữ nguyên, không thay đổi ---
+        const envelope = document.getElementById('envelope');
+        const canvas = document.getElementById('flower-canvas');
+        const sideImage = document.getElementById('side-image'); 
+        const ctx = canvas.getContext('2d');
+        let animationStarted = false;
+
+        function toggleLetter() {
+            envelope.classList.toggle('open');
+            document.body.classList.toggle('open');
+            sideImage.classList.toggle('open-state');
+            
+            if (envelope.classList.contains('open') && !animationStarted) {
+                initFallingItems();
+                animate();
+                animationStarted = true;
+            }
+        }
+
+        envelope.addEventListener('click', toggleLetter);
+        sideImage.addEventListener('click', toggleLetter);
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let fallingItems = [];
+        const numberOfItems = 50;
+        const itemEmojis = ['💵', '💰', '💴', '💶', '🤑', '💎', '💸'];
+
+        function initFallingItems() {
+            fallingItems = [];
+            for (let i = 0; i < numberOfItems; i++) {
+                fallingItems.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * -canvas.height,
+                    size: Math.random() * 20 + 20,
+                    speed: Math.random() * 2 + 1,
+                    emoji: itemEmojis[Math.floor(Math.random() * itemEmojis.length)],
+                    rotation: Math.random() * 360
+                });
+            }
+        }
+
+        function drawFallingItems() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            fallingItems.forEach(item => {
+                ctx.save();
+                ctx.translate(item.x, item.y);
+                ctx.rotate(item.rotation * Math.PI / 180);
+                ctx.font = `${item.size}px serif`;
+                ctx.fillText(item.emoji, 0, 0);
+                ctx.restore();
+            });
+        }
+
+        function updateFallingItems() {
+            fallingItems.forEach(item => {
+                item.y += item.speed;
+                item.x += Math.sin(item.y / item.size) * 0.5;
+                item.rotation += item.speed * 0.1;
+
+                if (item.y > canvas.height + item.size) {
+                    item.y = -item.size;
+                    item.x = Math.random() * canvas.width;
+                }
+            });
+        }
+
+        function animate() {
+            drawFallingItems();
+            updateFallingItems();
+            requestAnimationFrame(animate);
+        }
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            if (animationStarted) {
+                initFallingItems();
+            }
+        });
+    </script>
+
+</body>
+</html>
