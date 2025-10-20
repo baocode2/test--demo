@@ -5,6 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quà tặng cuộc sống</title>
     <style>
+
+        /* --- BẮT ĐẦU ĐOẠN CODE CẦN THÊM --- */
+
+        /* 1. Bo góc cho phần thân chính của phong bì rõ hơn một chút (tùy chọn) */
+        .envelope {
+            border-radius: 15px; /* Tăng độ bo tròn nếu bạn muốn */
+        }
+
+        /* 2. Tạo hình trái tim niêm phong trên mép thư */
+        .flap::before,
+        .flap::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 32px;
+            background: #e74c3c; /* Màu đỏ của trái tim */
+            border-radius: 50px 50px 0 0;
+            transition: opacity 0.4s ease-in-out;
+            top: 60px; /* Đặt vị trí của trái tim gần đỉnh nhọn */
+            left: 50%;
+            z-index: 5;
+        }
+
+        /* Tạo nửa trái tim bên trái */
+        .flap::before {
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        /* Tạo nửa trái tim bên phải */
+        .flap::after {
+            left: calc(50% - 20px); /* Dịch qua trái bằng chiều rộng của nó */
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        /* 3. Ẩn trái tim đi khi thư được mở */
+        .envelope-wrapper.open .flap::before,
+        .envelope-wrapper.open .flap::after {
+            opacity: 0;
+        }
+        /* --- KẾT THÚC ĐOẠN CODE CẦN THÊM --- */
+
+
         /* CSS Styling */
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap');
 
@@ -32,10 +76,10 @@
 
         #beating-heart {
             position: absolute;
-            width: 24cm; /* Kích thước lớn để thấy rõ */
-            height: 28cm;
-            left: 50%;
-            top: 50%;
+            width: 26cm; /* Kích thước lớn để thấy rõ */
+            height: 30cm;
+            left: 30%;
+            top: 20%;
             transform: translate(-50%, -50%);
             opacity: 0; /* Ban đầu ẩn */
             z-index: -1; /* Nằm ở lớp sâu nhất, dưới các ảnh nền */
@@ -74,6 +118,17 @@
             animation-play-state: running; /* Bắt đầu animation */
         }
 
+        /* --- BẮT ĐẦU ĐOẠN CODE CẦN THÊM --- */    
+
+        /* Hiệu ứng khi di chuột vào ảnh, CHỈ KHI thư chưa mở */
+        body:not(.open) .background-image:hover {
+            opacity: 1; /* Làm ảnh hiện rõ 100% */
+            transform: scale(1.5); /* Phóng to ảnh lên 10% */
+            z-index: 1; /* Đưa ảnh lên trên các ảnh khác để không bị che */
+        }
+
+        /* --- KẾT THÚC ĐOẠN CODE CẦN THÊM --- */
+
 
         .background-image {
             position: absolute;
@@ -84,7 +139,7 @@
             opacity: 0.6;
             filter: blur(0px);
             z-index: 0; /* Nằm trên trái tim (-1) */
-            transition: opacity 0.5s ease-in-out, filter 0.5s ease-in-out;
+            transition: opacity 0.5s ease-in-out, filter 0.5s ease-in-out, transform 0.4s ease;
         }
 
         #bg-image-1 { top: 5vh; left: 5vw; transform: rotate(4deg); }
@@ -104,7 +159,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             z-index: 1;
             opacity: 0;
-            transition: opacity 0.8s ease-in-out 0.3s, transform 0.8s ease-in-out; 
+            transition: opacity 0.8s ease-in-out 0.3s, transform 0.8s ease-in-out;
             cursor: pointer;
         }
 
@@ -174,13 +229,13 @@
             z-index: -1;
             transition: all 0.8s ease-in-out 0.4s; 
             opacity: 0;
-        }
+        }   
 
         
 
         .envelope-wrapper.open .flap { transform: rotateX(180deg); }
         .envelope-wrapper.open .card { top: -150px; z-index: 2; opacity: 1; }
-        .envelope-wrapper.open .envelope { transform: scale(0.9) translateX(350px); }
+        .envelope-wrapper.open .envelope { transform: scale(0.8) translateX(350px); }
         body.open #side-image { opacity: 1; transform: translateY(-50%) translateX(+40%); }
         #side-image.open-state { opacity: 1; transform: translateY(-50%) translateX(-50%); }
         .envelope-wrapper.open .prompt { opacity: 0; }
@@ -226,7 +281,7 @@
     <script>
         // --- JavaScript giữ nguyên, không thay đổi ---
         const envelope = document.getElementById('envelope');
-        const canvas = document.getElementById('flower-canvas');
+        const canvas = document.getElementById('flower-canvas');    
         const sideImage = document.getElementById('side-image'); 
         const ctx = canvas.getContext('2d');
         let animationStarted = false;
